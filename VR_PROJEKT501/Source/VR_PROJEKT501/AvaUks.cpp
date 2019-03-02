@@ -20,9 +20,17 @@ void UAvaUks::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void UAvaUks::AvaUks()
+{
+	// Saa Actor, mis kasutab antud klassi
 	AActor* Omanik = GetOwner();
-	
+
+	// Loo ukse pööraja
 	FRotator UusPooramine = FRotator(0.0f, 70.0f, 0.0f);
+
+	// Määra uksele pööraja
 	Omanik->SetActorRotation(UusPooramine);
 }
 
@@ -32,6 +40,10 @@ void UAvaUks::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	// Kui ActorMisAvab on volüümi sees, siis uks avaneb
+	if (SurvePlaat->IsOverlappingActor(ActorMisAvab))
+	{
+		AvaUks();
+	}
 }
 
