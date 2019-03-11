@@ -22,6 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void AvaUks();
+	void SuleUks();
 
 public:	
 	// Called every frame
@@ -29,12 +30,17 @@ public:
 
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	float AvatudNurk = 90.0f;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* SurvePlaat;
 
 	UPROPERTY(EditAnywhere)
+	float UkseSulgumiseViide = 1.f;
+
+	float ViimaneAvatudUkseAeg;
+
 	AActor* ActorMisAvab;		// Pawn pärineb actorist
+	AActor* Omanik;				// Uks
 };

@@ -20,18 +20,20 @@ void UAvaUks::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Omanik = GetOwner();
+	ActorMisAvab = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 void UAvaUks::AvaUks()
 {
-	// Saa Actor, mis kasutab antud klassi
-	AActor* Omanik = GetOwner();
-
-	// Loo ukse pööraja
-	FRotator UusPooramine = FRotator(0.0f, 70.0f, 0.0f);
-
 	// Määra uksele pööraja
-	Omanik->SetActorRotation(UusPooramine);
+	Omanik->SetActorRotation(FRotator(0.0f, AvatudNurk, 0.0f));
+}
+
+void UAvaUks::SuleUks()
+{
+	// Määra uksele pööraja
+	Omanik->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
 }
 
 
@@ -44,6 +46,13 @@ void UAvaUks::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 	if (SurvePlaat->IsOverlappingActor(ActorMisAvab))
 	{
 		AvaUks();
+		ViimaneAvatudUkseAeg = GetWorld()->GetTimeSeconds();
 	}
+
+	 // Kontroll, kas on aeg uks sulgeda
+	if (GetWorld()->GetTimeSeconds() - ViimaneAvatudUkseAeg > UkseSulgumiseViide) {
+		SuleUks();
+	}
+
 }
 
