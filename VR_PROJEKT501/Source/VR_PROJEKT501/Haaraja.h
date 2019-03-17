@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Components/InputComponent.h"
 #include "Haaraja.generated.h"
 
 
@@ -28,4 +30,22 @@ private:
 	// kui kaugele mangija ette me ulatume sentimeetrites
 	float Ulatus = 100.f;
 	
+	UPhysicsHandleComponent* FyysikaKasitleja = nullptr;
+
+	UInputComponent* SisendKomponent = nullptr;
+
+	// Ray-cast ja haara mis on haardeulatuses
+	void Haara();
+
+	// Kutsutakse, kui haare vabaneb
+	void Vabasta();
+
+	// Leia (eeldatavalt) ühendatud füüsika käsitleja
+	void LeiaFyysikaKasitlejaKomponent();
+
+	// Seadista üles (eeldatavalt) ühendatud sisendkomponent
+	void SeadistaSisendKomponent();
+
+	// Registreeri ulatuses oleva esimesena tabatud füüsilise keha
+	const FHitResult SaaLahimUlatusesOlevFyysikaKeha();
 };
