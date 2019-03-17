@@ -30,11 +30,7 @@ void UHaaraja::LeiaFyysikaKasitlejaKomponent()
 {
 	// Otsi ühendatud füüsika käsitlejat
 	FyysikaKasitleja = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (FyysikaKasitleja)
-	{
-		// füüsika käsitleja leiti
-	}
-	else
+	if (FyysikaKasitleja == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%s puudu FyysikaKasitleja komponent"), *GetOwner()->GetName());
 	}
@@ -46,9 +42,6 @@ void UHaaraja::SeadistaSisendKomponent()
 	SisendKomponent = GetOwner()->FindComponentByClass<UInputComponent>();
 	if (SisendKomponent)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Sisendkomponent leitud"));
-
-		/// Seo sisendtelg
 		SisendKomponent->BindAction("Haara", IE_Pressed, this, &UHaaraja::Haara);
 		SisendKomponent->BindAction("Haara", IE_Released, this, &UHaaraja::Vabasta);
 	}
@@ -60,28 +53,24 @@ void UHaaraja::SeadistaSisendKomponent()
 
 
 void UHaaraja::Haara() {
-	UE_LOG(LogTemp, Warning, TEXT("Haara vajutatud"));
-
 	// Järgi mängijast väljuvat kujutletavat joont ja vaata,
 	// kas me ulatume mõne actor'ini millel on seadistatud physics body collision channel
 	auto TabamuseVastus = SaaLahimUlatusesOlevFyysikaKeha();
-	auto ComponentToGrab = TabamuseVastus.GetComponent();
+	auto KomponentMidaHaarata = TabamuseVastus.GetComponent();
 	auto ActorTabas = TabamuseVastus.GetActor();
 
 	// Kui me tabame midagi, siis ühenda füüsika käsitleja (Physics Handle)
 	if (ActorTabas != nullptr) {
-		// ühendab füüsika käsitleja
 		FyysikaKasitleja->GrabComponent(
-			ComponentToGrab,
+			KomponentMidaHaarata,
 			NAME_None,
-			ComponentToGrab->GetOwner()->GetActorLocation(),
+			KomponentMidaHaarata->GetOwner()->GetActorLocation(),
 			true // lubab pöörelda
 		);
 	}
 }
 
 void UHaaraja::Vabasta() {
-	UE_LOG(LogTemp, Warning, TEXT("Haara vabastatud"));
 	FyysikaKasitleja->ReleaseComponent();
 }
 
@@ -90,33 +79,15 @@ void UHaaraja::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Saa mängija vaatepunkt
-	FVector MangijaVaatePunktiAsukoht;
-	FRotator MangijaVaatePunktiRotatsioon;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		VALJA MangijaVaatePunktiAsukoht,
-		VALJA MangijaVaatePunktiRotatsioon
-	);
-	FVector JooneJaljeLopp = MangijaVaatePunktiAsukoht + MangijaVaatePunktiRotatsioon.Vector() * 100;
-
-
 	// kontroll, kas me oleme haaranud komponendi
 	if (FyysikaKasitleja->GrabbedComponent) {
 		// liigutab objekti mida me hoiame
-		FyysikaKasitleja->SetTargetLocation(JooneJaljeLopp);
+		FyysikaKasitleja->SetTargetLocation(SaaVaatepuntkiJooneLopp());
 	}
 }
 
 const FHitResult UHaaraja::SaaLahimUlatusesOlevFyysikaKeha()
 {
-	// Saa mängija vaatepunkt
-	FVector MangijaVaatePunktiAsukoht;
-	FRotator MangijaVaatePunktiRotatsioon;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
-		VALJA MangijaVaatePunktiAsukoht,
-		VALJA MangijaVaatePunktiRotatsioon
-	);
-	FVector JooneJaljeLopp = MangijaVaatePunktiAsukoht + MangijaVaatePunktiRotatsioon.Vector() * 100;
 	
 	/// tõmbab punase silumisjoone et visualiseerida haarajat
 /*	DrawDebugLine(
@@ -129,23 +100,41 @@ const FHitResult UHaaraja::SaaLahimUlatusesOlevFyysikaKeha()
 		0.f,
 		10.f);*/
 
-	/// Seadista päringu parameetrid
-	FCollisionQueryParams TraceParameetrid(FName(TEXT("")), false, GetOwner());
-
 	/// Jälgi välja ulatuvat joont (line-trace) (AKA ray-cast)
-	FHitResult Tabamus;
+	FHitResult TabamusTulemus;
+	FCollisionQueryParams TraceParameetrid(FName(TEXT("")), false, GetOwner());
 	GetWorld()->LineTraceSingleByObjectType(
-		OUT Tabamus,
-		MangijaVaatePunktiAsukoht,
-		JooneJaljeLopp,
+		OUT TabamusTulemus,
+		SaaVaatepuntkiJooneAlgus(),
+		SaaVaatepuntkiJooneLopp(),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 		TraceParameetrid
 	);
 
 	// Vaatab, mida me tabasime
-	AActor* ActorPihtas = Tabamus.GetActor();
+	AActor* ActorPihtas = TabamusTulemus.GetActor();
 	if (ActorPihtas) {
 		UE_LOG(LogTemp, Warning, TEXT("Line trace tabas: %s"), *(ActorPihtas->GetName()));
 	} 
-	return Tabamus;
+	return TabamusTulemus;
+}
+
+FVector UHaaraja::SaaVaatepuntkiJooneAlgus() {
+	FVector MangijaVaatePunktiAsukoht;
+	FRotator MangijaVaatePunktiRotatsioon;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		VALJA MangijaVaatePunktiAsukoht,
+		VALJA MangijaVaatePunktiRotatsioon
+	);
+	return MangijaVaatePunktiAsukoht;
+}
+
+FVector UHaaraja::SaaVaatepuntkiJooneLopp() {
+	FVector MangijaVaatePunktiAsukoht;
+	FRotator MangijaVaatePunktiRotatsioon;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		VALJA MangijaVaatePunktiAsukoht,
+		VALJA MangijaVaatePunktiRotatsioon
+	);
+	return MangijaVaatePunktiAsukoht + MangijaVaatePunktiRotatsioon.Vector() * 100;
 }

@@ -48,4 +48,10 @@ private:
 
 	// Registreeri ulatuses oleva esimesena tabatud füüsilise keha
 	const FHitResult SaaLahimUlatusesOlevFyysikaKeha();
+
+	// Tagastab ulatusjoone praeguse alguspunkti
+	FVector SaaVaatepuntkiJooneAlgus();
+
+	// Tagastab ulatusjoone praeguse lõpppunkti
+	FVector SaaVaatepuntkiJooneLopp();
 };
