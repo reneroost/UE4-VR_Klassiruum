@@ -1,4 +1,4 @@
-// SEE ON VÄIKE MUUDATUS
+// SEE ON VÄIKE MUUDATU
 
 // Fill out your copyright notice in the Description page of Project Settings.
 
