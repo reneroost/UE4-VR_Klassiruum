@@ -41,6 +41,8 @@ private:
 
 	float ViimaneAvatudUkseAeg;
 
-	AActor* ActorMisAvab;		// Pawn pärineb actorist
-	AActor* Omanik;				// Uks
+	AActor* Omanik;			// Uks
+
+	// Tagastab kogumassi kilogrammides
+	float SaaSurvePlaadilOlevateObjektideKogumass();
 };

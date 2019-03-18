@@ -3,6 +3,8 @@
 #include "AvaUks.h"
 #include "GameFramework/Actor.h"
 
+#define OUT
+
 
 // Sets default values for this component's properties
 UAvaUks::UAvaUks()
@@ -21,7 +23,6 @@ void UAvaUks::BeginPlay()
 	Super::BeginPlay();
 	
 	Omanik = GetOwner();
-	ActorMisAvab = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 void UAvaUks::AvaUks()
@@ -42,17 +43,35 @@ void UAvaUks::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Kui ActorMisAvab on volüümi sees, siis uks avaneb
-	if (SurvePlaat->IsOverlappingActor(ActorMisAvab))
+	if (SaaSurvePlaadilOlevateObjektideKogumass() > 20.f)
 	{
 		AvaUks();
 		ViimaneAvatudUkseAeg = GetWorld()->GetTimeSeconds();
 	}
 
 	 // Kontroll, kas on aeg uks sulgeda
-	if (GetWorld()->GetTimeSeconds() - ViimaneAvatudUkseAeg > UkseSulgumiseViide) {
+	if (GetWorld()->GetTimeSeconds() - ViimaneAvatudUkseAeg > UkseSulgumiseViide)
+	{
 		SuleUks();
 	}
+}
 
+float UAvaUks::SaaSurvePlaadilOlevateObjektideKogumass()
+{
+
+	float KoguMass = 0.f;
+
+	// Leiab kõik surveplaadil olevad actorid
+	TArray<AActor*> SurvePlaadilOlevadActorid;
+	SurvePlaat->GetOverlappingActors(OUT SurvePlaadilOlevadActorid);
+
+	// Liidab nende massid kokku
+	for (const auto* Actor : SurvePlaadilOlevadActorid)
+	{
+		KoguMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Warning, TEXT("%s on surveplaadil"), *Actor->GetName());
+	}
+
+	return KoguMass;
 }
 
