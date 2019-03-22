@@ -23,6 +23,10 @@ void UAvaUks::BeginPlay()
 	Super::BeginPlay();
 	
 	Omanik = GetOwner();
+
+	if (!SurvePlaat) {
+		UE_LOG(LogTemp, Error, TEXT("%s puudu surveplaat"), *GetOwner()->GetName());
+	}
 }
 
 void UAvaUks::AvaUks()
@@ -63,6 +67,8 @@ float UAvaUks::SaaSurvePlaadilOlevateObjektideKogumass()
 
 	// Leiab kõik surveplaadil olevad actorid
 	TArray<AActor*> SurvePlaadilOlevadActorid;
+
+	if (!SurvePlaat) { return KoguMass; }
 	SurvePlaat->GetOverlappingActors(OUT SurvePlaadilOlevadActorid);
 
 	// Liidab nende massid kokku

@@ -61,6 +61,7 @@ void UHaaraja::Haara() {
 
 	// Kui me tabame midagi, siis ühenda füüsika käsitleja (Physics Handle)
 	if (ActorTabas != nullptr) {
+		if (!FyysikaKasitleja) { return; }
 		FyysikaKasitleja->GrabComponent(
 			KomponentMidaHaarata,
 			NAME_None,
@@ -71,6 +72,7 @@ void UHaaraja::Haara() {
 }
 
 void UHaaraja::Vabasta() {
+	if (!FyysikaKasitleja) { return; }
 	FyysikaKasitleja->ReleaseComponent();
 }
 
@@ -79,6 +81,7 @@ void UHaaraja::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!FyysikaKasitleja) { return; }
 	// kontroll, kas me oleme haaranud komponendi
 	if (FyysikaKasitleja->GrabbedComponent) {
 		// liigutab objekti mida me hoiame

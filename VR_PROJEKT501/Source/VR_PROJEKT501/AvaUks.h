@@ -34,14 +34,14 @@ private:
 	float AvatudNurk = 90.0f;
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume* SurvePlaat;
+	ATriggerVolume* SurvePlaat = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	float UkseSulgumiseViide = 1.f;
 
 	float ViimaneAvatudUkseAeg;
 
-	AActor* Omanik;			// Uks
+	AActor* Omanik = nullptr;			// Uks
 
 	// Tagastab kogumassi kilogrammides
 	float SaaSurvePlaadilOlevateObjektideKogumass();
