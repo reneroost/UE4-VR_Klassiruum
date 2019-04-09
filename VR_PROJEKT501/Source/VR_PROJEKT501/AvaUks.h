@@ -7,6 +7,7 @@
 #include "Engine/TriggerVolume.h"
 #include "AvaUks.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUkseSundmus);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class VR_PROJEKT501_API UAvaUks : public UActorComponent
@@ -21,25 +22,22 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void AvaUks();
-	void SuleUks();
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintAssignable)
+	FUkseSundmus OnAva;
+
+	UPROPERTY(BlueprintAssignable)
+	FUkseSundmus OnSule;
 
 private:
-	UPROPERTY(EditAnywhere)
-	float AvatudNurk = 90.0f;
-
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* SurvePlaat = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	float UkseSulgumiseViide = 1.f;
-
-	float ViimaneAvatudUkseAeg;
+	float TriggerMass = 20.f;
 
 	AActor* Omanik = nullptr;			// Uks
 

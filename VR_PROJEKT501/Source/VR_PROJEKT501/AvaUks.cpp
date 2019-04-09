@@ -29,17 +29,6 @@ void UAvaUks::BeginPlay()
 	}
 }
 
-void UAvaUks::AvaUks()
-{
-	// Määra uksele pööraja
-	Omanik->SetActorRotation(FRotator(0.0f, AvatudNurk, 0.0f));
-}
-
-void UAvaUks::SuleUks()
-{
-	// Määra uksele pööraja
-	Omanik->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
-}
 
 
 // Called every frame
@@ -47,16 +36,11 @@ void UAvaUks::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (SaaSurvePlaadilOlevateObjektideKogumass() > 20.f)
+	if (SaaSurvePlaadilOlevateObjektideKogumass() > TriggerMass)
 	{
-		AvaUks();
-		ViimaneAvatudUkseAeg = GetWorld()->GetTimeSeconds();
-	}
-
-	 // Kontroll, kas on aeg uks sulgeda
-	if (GetWorld()->GetTimeSeconds() - ViimaneAvatudUkseAeg > UkseSulgumiseViide)
-	{
-		SuleUks();
+		OnAva.Broadcast();
+	} else {
+		OnSule.Broadcast();
 	}
 }
 
